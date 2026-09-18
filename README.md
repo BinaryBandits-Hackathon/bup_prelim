@@ -56,12 +56,16 @@ The system implements a robust 3-stage pipeline:
 
 ## Docker (For Judges)
 
-The official container is hosted on Docker Hub. Judges can pull and run it directly without building from source:
+Due to CI environment limitations, the Docker image is not hosted on a public registry. Judges must build and run the image locally from the source code:
 
 ```bash
-docker pull tijulkabir/gridwise-api:latest
-docker run -d -p 8000:8000 --env GROQ_API_KEY=your_groq_api_key_here tijulkabir/gridwise-api:latest
+docker build -t gridwise-api .
+docker run -d -p 8000:8000 --env GROQ_API_KEY=your_groq_api_key_here gridwise-api
 ```
+
+## Team & Author
+- **Author:** Tijul Kabir Toha (Team Binary Bandits)
+- **Event:** BUP CSE Fest 2026 — LLM-Assisted Smart Campus Energy Optimization
 
 ## Public-Sample Test Command
 
