@@ -1,4 +1,4 @@
-# GridWise Energy Optimizer - BUP CSE Fest 2026
+# GridWise Energy Optimizer - BUP Hackathon Preli 2026
 
 ## Overview
 This is a comprehensive energy optimization API built for the BUP CSE Fest 2026 Hackathon (GridWise). It takes a 24-hour campus energy forecast, along with unstructured operator notes, and produces an optimal energy dispatch schedule.
