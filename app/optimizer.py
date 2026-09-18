@@ -66,8 +66,12 @@ def optimize_energy(
     discharge = [pulp.LpVariable(f"discharge_{h}", lowBound=0, upBound=bat.max_discharge_kwh_per_hour) for h in range(H)]
     bat_energy = [pulp.LpVariable(f"bat_{h}", lowBound=bat.minimum_energy_kwh, upBound=bat.capacity_kwh) for h in range(H)]
 
-    # Objective: minimize total grid electricity cost
-    prob += pulp.lpSum(grid[h] * hours_data[h].tariff_bdt_per_kwh for h in range(H))
+    # Objective: minimize total grid electricity cost + tiny penalty for peak grid usage
+    peak_grid_var = pulp.LpVariable("peak_grid_var", lowBound=0)
+    for h in range(H):
+        prob += grid[h] <= peak_grid_var, f"peak_grid_constraint_{h}"
+        
+    prob += pulp.lpSum(grid[h] * hours_data[h].tariff_bdt_per_kwh for h in range(H)) + (0.0001 * peak_grid_var)
 
     for h in range(H):
         # Energy balance: grid + solar + discharge = demand + charge
@@ -122,12 +126,13 @@ def optimize_energy(
         be = round(pulp.value(bat_energy[h]) or 0, 4)
 
         # Determine battery action
-        if ch > 0.001:
+        net_charge = ch - dis
+        if net_charge > 0.001:
             action = BatteryAction.CHARGE
-            bat_kwh = ch
-        elif dis > 0.001:
+            bat_kwh = net_charge
+        elif net_charge < -0.001:
             action = BatteryAction.DISCHARGE
-            bat_kwh = dis
+            bat_kwh = abs(net_charge)
         else:
             action = BatteryAction.IDLE
             bat_kwh = 0.0
