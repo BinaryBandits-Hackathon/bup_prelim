@@ -3,7 +3,7 @@ import requests
 import os
 
 SAMPLES_FILE = "../BUP_CSE_FEST_2026_Preli_Public_Sample_Cases.json"
-URL = "http://localhost:8001/optimize-energy"
+URL = "https://bup-prelim.onrender.com/optimize-energy"
 
 def run_tests():
     with open(SAMPLES_FILE, "r") as f:
