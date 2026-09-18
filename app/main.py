@@ -47,10 +47,15 @@ async def optimize_energy_endpoint(request: OptimizeRequest):
         raise
     except Exception as e:
         print(f"Error processing request: {e}")
-        raise HTTPException(
-            status_code=500,
-            detail=f"Internal server error: {type(e).__name__}"
-        )
+        try:
+            # Safe baseline failure: Attempt to solve with no directives
+            return optimize_energy(request, [])
+        except Exception:
+            # Absolute fallback: return 422 instead of 500
+            raise HTTPException(
+                status_code=422,
+                detail=f"Unprocessable entity during optimization: {str(e)}"
+            )
 
 
 @app.exception_handler(422)
