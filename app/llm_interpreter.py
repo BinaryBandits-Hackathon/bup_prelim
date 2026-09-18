@@ -2,8 +2,9 @@
 
 import json
 import re
+import random
 from groq import Groq
-from app.config import GROQ_API_KEY, GROQ_MODEL
+from app.config import GROQ_API_KEYS, GROQ_MODEL
 from app.models import DirectiveInterpretation, DirectiveType
 
 SYSTEM_PROMPT = """You are a campus energy system operator note interpreter for GridWise.
@@ -66,24 +67,41 @@ RULES:
 
 def _call_llm(notes: list[str], battery_capacity_kwh: float) -> str:
     """Call Groq LLM to interpret operator notes."""
-    client = Groq(api_key=GROQ_API_KEY)
+    if not GROQ_API_KEYS:
+        raise ValueError("No Groq API keys configured.")
 
     notes_text = f"Battery Capacity: {battery_capacity_kwh} kWh\n\n"
     for i, note in enumerate(notes):
         notes_text += f"Note {i}: \"{note}\"\n"
 
-    response = client.chat.completions.create(
-        model=GROQ_MODEL,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": f"Interpret these operator notes:\n\n{notes_text}"}
-        ],
-        temperature=0,
-        response_format={"type": "json_object"},
-        max_tokens=2000,
-    )
-
-    return response.choices[0].message.content
+    available_keys = list(GROQ_API_KEYS)
+    random.shuffle(available_keys)
+    
+    last_error = None
+    for key in available_keys:
+        try:
+            # Disable internal retries so we can failover instantly
+            client = Groq(api_key=key, max_retries=0)
+        
+            response = client.chat.completions.create(
+                model=GROQ_MODEL,
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": f"Interpret these operator notes:\n\n{notes_text}"}
+                ],
+                temperature=0,
+                response_format={"type": "json_object"},
+                max_tokens=2000,
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            print(f"Error {type(e).__name__} for key ending in ...{key[-4:]}. Trying next key...")
+            last_error = e
+            continue
+            
+    if last_error:
+        raise last_error
+    raise RuntimeError("Failed to get LLM response.")
 
 
 def _extract_json_array(raw: str) -> list[dict]:
