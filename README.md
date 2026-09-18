@@ -36,7 +36,7 @@ The system is engineered to **never breach the 30-second response deadline**:
 
 ### Prerequisites
 - Python 3.11+
-- Groq API Key (Free tier)
+- Groq API Key 
 
 ### Installation
 
