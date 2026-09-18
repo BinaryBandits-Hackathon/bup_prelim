@@ -80,8 +80,9 @@ def _call_llm(notes: list[str], battery_capacity_kwh: float) -> str:
     last_error = None
     for key in available_keys:
         try:
-            # Disable internal retries so we can failover instantly
-            client = Groq(api_key=key, max_retries=0)
+            # Disable internal retries and strictly enforce a 25s timeout 
+            # so the total API response never breaches the 30s deadline limit
+            client = Groq(api_key=key, max_retries=0, timeout=25.0)
         
             response = client.chat.completions.create(
                 model=GROQ_MODEL,
