@@ -1,6 +1,7 @@
 import json
 import requests
 import os
+import time
 
 SAMPLES_FILE = "../BUP_CSE_FEST_2026_Preli_Public_Sample_Cases.json"
 URL = "https://bup-prelim.onrender.com/optimize-energy"
@@ -22,7 +23,10 @@ def run_tests():
         
         try:
             # Check the API
+            start_time = time.time()
             response = requests.post(URL, json=case["input"])
+            end_time = time.time()
+            elapsed_time = end_time - start_time
             
             if response.status_code != 200:
                 print(f"[FAIL] API Error: HTTP {response.status_code}")
@@ -32,6 +36,8 @@ def run_tests():
             
             result = response.json()
             expected = case["expected_output"]
+            
+            print(f"Response time: {elapsed_time:.2f} seconds")
             
             # 1. Check interpretations
             print("Interpretations:")
