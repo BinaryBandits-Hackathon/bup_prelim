@@ -1,4 +1,4 @@
-# ⚡ GridWise Energy Optimizer
+#  GridWise Energy Optimizer
 
 ![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.104.1-009688.svg)
@@ -11,7 +11,7 @@ This system takes a 24-hour campus energy forecast and messy, unstructured human
 
 ---
 
-## 🏛️ Architecture & Highlights
+##  Architecture & Highlights
 
 Our system is designed to be **fast, flawless, and fault-tolerant**:
 
@@ -27,7 +27,7 @@ Our system is designed to be **fast, flawless, and fault-tolerant**:
 
 ---
 
-## 🐳 Docker Setup (For Judges)
+##  Docker Setup (For Judges)
 
 Due to CI environment limitations, the Docker image is not hosted on a public registry. Judges must build and run the image locally from the source code.
 
@@ -41,7 +41,7 @@ docker run -d -p 8000:8000 --env GROQ_API_KEY=your_groq_api_key_here gridwise-ap
 
 ---
 
-## 🧪 Testing the API
+##  Testing the API
 
 Once the server is running (locally or via the live Render URL), you can test the `SAMPLE-01` case using `curl`:
 
@@ -62,7 +62,7 @@ Alternatively, visit `https://bup-prelim.onrender.com/docs` in your browser to u
 
 ---
 
-## 🔒 Dependencies & Security
+##  Dependencies & Security
 
 - **LLM Provider:** Relies on external Groq API (`qwen-27b`) for note interpretation.
 - **Secrets:** API keys are injected at runtime via Environment Variables. **No secrets are ever hardcoded or committed to version control.**
@@ -70,6 +70,6 @@ Alternatively, visit `https://bup-prelim.onrender.com/docs` in your browser to u
 
 ---
 
-## 👨‍💻 Team
-- **Author:** Tijul Kabir Toha & Team Binary Bandits
+## Team
+- **Author:**  Team Binary Bandits
 - **Event:** BUP CSE Fest 2026 — LLM-Assisted Smart Campus Energy Optimization
